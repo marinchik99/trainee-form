@@ -1,2 +1,2 @@
 # trainee-form
-Deploy: https://marina-nazarenko-form-seobility.netlify.app
+Разработка находится в ветке develop. Deploy: https://marina-nazarenko-form-seobility.netlify.app
