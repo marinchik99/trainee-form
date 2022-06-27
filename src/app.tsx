@@ -1,6 +1,6 @@
 import React from 'react';
-import './style.sass';
-import { IForm, IState } from './interface';
+import './css/style.sass';
+import { IState } from './interface';
 
 class App extends React.Component<unknown, IState> {
   nameInput: React.RefObject<HTMLInputElement>;
@@ -15,8 +15,6 @@ class App extends React.Component<unknown, IState> {
 
   form: React.RefObject<HTMLFormElement>;
 
-  cardsArr: IForm[];
-
   constructor(props: unknown) {
     super(props);
     this.nameInput = React.createRef();
@@ -25,42 +23,59 @@ class App extends React.Component<unknown, IState> {
     this.birthInput = React.createRef();
     this.messageInput = React.createRef();
     this.form = React.createRef();
-    this.cardsArr = [];
     this.state = {
       errorName: false,
       errorEmail: false,
       errorPhone: false,
       errorBirth: false,
       errorMessage: false,
-      disSubmit: true,
       isValidate: false,
-      cardsArray: [],
+      isSuccess: false,
+      isError: false,
     };
   }
 
-  handleSubmitButton = () => {
+  postRequest = (data: {}) => {
+    return new Promise((res, rej) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://jsonplaceholder.typicode.com/posts', true);
+      xhr.responseType = "json";
+      xhr.setRequestHeader('content-type', 'application/json');
+      xhr.onload = () => {
+        if (xhr.status < 400) {
+          res(xhr.response);
+        } else {
+          rej(xhr.response);
+        }
+      };
+      xhr.send(JSON.stringify(data));
+    });
+  }
+
+  handleSubmitButton = async () => {
     window.event.preventDefault();
-    // const card = {
-    //   nameInput: this.nameInput.current.value,
-    //   authorInput: this.authorInput.current.value,
-    //   dateInput: this.dateInput.current.value.slice(0, 4),
-    //   isChecked: this.isChecked.current.checked,
-    //   isSwitched: this.isSwitched.current.checked,
-    //   countrySelect:
-    //     this.countrySelect.current.options[this.countrySelect.current.selectedIndex].text,
-    //   fileInput:
-    //     this.fileInput.current.value.length == 0
-    //       ? null
-    //       : URL.createObjectURL(this.fileInput.current.files[0]),
-    // };
+    const form = {
+      nameInput: this.nameInput.current.value,
+      emailInput: this.emailInput.current.value,
+      phoneInput: this.phoneInput.current.value,
+      birthInput: this.birthInput.current.value,
+      messageInput: this.messageInput.current.value,
+    };
     this.checkValid();
     if (this.state.isValidate) {
-      //this.cardsArr.unshift(card);
       setTimeout(() => {
         this.setState({ isValidate: false });
       }, 2000);
-      this.form.current.reset();
-      this.setState({ disSubmit: true, cardsArray: this.cardsArr });
+      await this.postRequest(form).then(() => {
+        this.form.current.reset();
+        this.setState({ isSuccess: true });
+      }).catch(() => {
+        this.setState({ isError: true });
+      }).finally(() => {
+        setTimeout(() => {
+          this.setState({ isError: false, isSuccess: false });
+        }, 2000)
+      });
     }
   };
 
@@ -75,9 +90,9 @@ class App extends React.Component<unknown, IState> {
       this.state.errorPhone ||
       this.state.errorBirth ||
       this.state.errorMessage) {
-        this.setState({ isValidate: false, disSubmit: true });
+        this.setState({ isValidate: true });
     } else {
-      this.setState({ isValidate: true, disSubmit: true });
+      this.setState({ isValidate: false });
     }
   };
 
@@ -89,7 +104,7 @@ class App extends React.Component<unknown, IState> {
   }
 
   checkValidName = () => {
-    if (!/^([aA-zZ]{3,30})+(?:[\s.-]([aA-zZ]{3,30})$)*$/.test(this.nameInput.current.value)) {
+    if (!/^[aA-zZ]{3,30} [aA-zZ]{3,30}$/.test(this.nameInput.current.value)) {
       this.setState({ errorName: true });
     } else {
       this.setState({ errorName: false });
@@ -131,9 +146,10 @@ class App extends React.Component<unknown, IState> {
 
   render() {
     return (
-      <main className="main">
+      <><main className="main">
         <form
           className="form"
+          name="form"
           noValidate
           onSubmit={this.handleSubmitButton}
           ref={this.form}
@@ -144,8 +160,7 @@ class App extends React.Component<unknown, IState> {
               placeholder="ALEX PETROV"
               name="name"
               ref={this.nameInput}
-              onChange={this.toUpper}
-            />
+              onChange={this.toUpper} />
           </label>
           {this.state.errorName && (
             <p className="not-valid">Должно содержать два слова и пробел между ними</p>
@@ -183,6 +198,9 @@ class App extends React.Component<unknown, IState> {
           </div>
         </form>
       </main>
+      {this.state.isSuccess && <p id="valid-submit">Success request!</p>}
+      {this.state.isError && <p id="valid-submit">Wrong request!</p>}
+      </>
     );
   }
 }

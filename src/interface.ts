@@ -12,7 +12,7 @@ export interface IState {
   errorPhone?: boolean;
   errorBirth?: boolean;
   errorMessage?: boolean;
-  cardsArray: IForm[];
-  disSubmit?: boolean;
   isValidate?: boolean;
+  isSuccess?: boolean;
+  isError?: boolean;
 }
