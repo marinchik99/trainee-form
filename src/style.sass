@@ -1,0 +1,68 @@
+$font-stack: Helvetica, sans-serif
+$primary-color: rgb(188, 211, 226)
+
+main
+  display: flex
+  flex-direction: column
+  font: 100% $font-stack
+  color: $primary-color
+  background: #12203d
+  width: 360px
+  height: 480px
+  margin: 50px auto
+  justify-content: center
+  align-items: center
+  box-shadow: 0px 0px 5px 8px #12203d7c
+  padding: 20px 5px
+  .form
+    display: flex
+    flex-direction: column
+    justify-content: space-between
+    width: 340px
+    height: 480px
+    font-size: 1.1rem
+    .form-text
+      display: flex
+      flex-direction: column
+      align-items: flex-start
+      span
+        padding-left: 15px
+      input,
+      textarea
+        margin: 5px auto
+        width: 300px
+        height: 30px
+        outline: none
+        border-radius: 10px
+        font-size: 1rem
+        padding-left: 10px
+      textarea
+        height: 60px
+        resize: none
+    .form__button
+      display: flex
+      justify-content: center
+      .submit-button
+        width: 120px
+        height: 30px
+        border: none
+        background: $primary-color
+        border-radius: 5px
+        font-size: 1rem
+        margin: 10px auto 0px
+    .not-valid 
+      position: absolute
+      color: #e93030
+      font-size: 0.7rem
+      top: 125px
+      padding-left: 40px
+    .not-valid.email
+      top: 205px
+    .not-valid.phone
+      top: 290px
+    .not-valid.birth
+      top: 370px
+      padding-left: 120px
+    .not-valid.message
+      top: 480px
+      padding-left: 50px
